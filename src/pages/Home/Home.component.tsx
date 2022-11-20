@@ -2,7 +2,7 @@ import { useState } from "react";
 import { MenuItem, Select } from "@mui/material";
 import ShortenedUrl from "../../components/ShortenedUrl/ShortenedUrl.component";
 import { UrlDetails } from "./Home.types";
-import { getAllUrls, getUniqueUid } from "./Home.services";
+import { deleteShortUrl, getAllUrls, getUniqueUid } from "./Home.services";
 
 const DOMAIN_NAMES = ["http://localhost:3000/"];
 
@@ -14,6 +14,8 @@ function Home() {
   );
   const [nbClick, setNbClicks] = useState<Number | null>(null);
   const [shortUrl, setShortUrl] = useState("");
+  const [shortUrlToDelete, setShortUrlToDelete] = useState("");
+  const [message, setMessage] = useState("");
 
   const shortenUrl = () => {
     const savedUrls = getAllUrls();
@@ -38,6 +40,15 @@ function Home() {
     if (urlDetails) {
       setNbClicks(urlDetails.nbClicks);
     }
+  };
+
+  const handleDeleteShortenedUrl = () => {
+    const allUrlsDetails = getAllUrls();
+    const succesOrErrorMessage = deleteShortUrl(
+      shortUrlToDelete,
+      allUrlsDetails
+    );
+    setMessage(succesOrErrorMessage);
   };
 
   return (
@@ -75,6 +86,17 @@ function Home() {
         }}
         action={getNbOfClicks}
         text={`The number of clicks to your shortened url is: ${nbClick}`}
+      />
+      <ShortenedUrl
+        title="Delete shortened link"
+        inputPlaceholder="Enter short link to delete"
+        buttonTitle="Submit URL"
+        value={shortUrlToDelete}
+        onChange={(e) => {
+          setShortUrlToDelete(e.target.value);
+        }}
+        action={handleDeleteShortenedUrl}
+        text={message}
       />
     </div>
   );

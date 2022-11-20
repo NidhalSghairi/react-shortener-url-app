@@ -13,3 +13,20 @@ export const getUniqueUid = (allUrls: UrlDetails[]) => {
   }
   return uid;
 };
+
+export const deleteShortUrl = (
+  shortUrlToDelete: string,
+  allUrls: UrlDetails[]
+) => {
+  const split = shortUrlToDelete.split("/");
+  const shortUrlUid = split[split.length - 1];
+  const index = allUrls.findIndex((url) => url.uid === shortUrlUid);
+
+  if (index !== -1) {
+    allUrls.splice(index, 1);
+    localStorage.setItem("allUrlsDetails", JSON.stringify(allUrls));
+    return "Your shortened url is correctly removed";
+  } else {
+    return "This URL does not exist";
+  }
+};
