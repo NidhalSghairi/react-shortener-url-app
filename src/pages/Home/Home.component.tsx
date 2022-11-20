@@ -3,6 +3,7 @@ import { MenuItem, Select } from "@mui/material";
 import ShortenedUrl from "../../components/ShortenedUrl/ShortenedUrl.component";
 import { UrlDetails } from "./Home.types";
 import { deleteShortUrl, getAllUrls, getUniqueUid } from "./Home.services";
+import { Wrapper } from "./Home.style";
 
 /* 
   In order to add the ability for users to choose
@@ -18,7 +19,7 @@ function Home() {
   const [selectedDomainName, setSelectedDomainName] = useState(
     "http://localhost:3000/"
   );
-  const [nbClicks, setNbClicks] = useState<Number | null>(null);
+  const [nbClicks, setNbClicks] = useState<Number>(0);
   const [shortUrl, setShortUrl] = useState("");
   const [shortUrlToDelete, setShortUrlToDelete] = useState("");
   const [message, setMessage] = useState("");
@@ -75,57 +76,55 @@ function Home() {
   };
 
   return (
-    <div>
-      <div style={{ display: "flex" }}>
-        <h3>select a domain name to customize your shorten url </h3>
-        <Select
-          value={selectedDomainName}
-          label="Domain"
-          onChange={(e) => setSelectedDomainName(e.target.value)}
-        >
-          {DOMAIN_NAMES.map((domainName) => (
-            <MenuItem value={domainName}>{domainName}</MenuItem>
-          ))}
-        </Select>
+    <Wrapper>
+      <div>
+        <div>
+          <h3>select a domain name to customize your shortened url </h3>
+          <Select
+            value={selectedDomainName}
+            label="Domain"
+            onChange={(e) => setSelectedDomainName(e.target.value)}
+          >
+            {DOMAIN_NAMES.map((domainName) => (
+              <MenuItem value={domainName}>{domainName}</MenuItem>
+            ))}
+          </Select>
+        </div>
+        <ShortenedUrl
+          title="URL Shortener"
+          inputPlaceholder="Enter link to be shortened"
+          buttonTitle="Submit URL"
+          value={longUrl}
+          onChange={(e) => {
+            setLongUrl(e.target.value);
+          }}
+          action={shortenUrl}
+          text={shortenedLinkError || shortenedLink}
+        />
+        <ShortenedUrl
+          title="Get number of clicks"
+          inputPlaceholder="Enter short link to see the number of clicks on it"
+          buttonTitle="Submit URL"
+          value={shortUrl}
+          onChange={(e) => {
+            setShortUrl(e.target.value);
+          }}
+          action={getNbOfClicks}
+          text={`The number of clicks on your shortened url is: ${nbClicks}`}
+        />
+        <ShortenedUrl
+          title="Delete shortened link"
+          inputPlaceholder="Enter a shortened link to delete"
+          buttonTitle="Submit URL"
+          value={shortUrlToDelete}
+          onChange={(e) => {
+            setShortUrlToDelete(e.target.value);
+          }}
+          action={handleDeleteShortenedUrl}
+          text={message}
+        />
       </div>
-      <ShortenedUrl
-        title="URL Shortener"
-        inputPlaceholder="Enter link to be shortened"
-        buttonTitle="Submit URL"
-        value={longUrl}
-        onChange={(e) => {
-          setLongUrl(e.target.value);
-        }}
-        action={shortenUrl}
-        text={shortenedLinkError || shortenedLink}
-      />
-      <ShortenedUrl
-        title="Get number of clicks"
-        inputPlaceholder="Enter short link to be see number of clicks"
-        buttonTitle="Submit URL"
-        value={shortUrl}
-        onChange={(e) => {
-          setShortUrl(e.target.value);
-        }}
-        action={getNbOfClicks}
-        text={
-          nbClicks
-            ? `The number of clicks on your shortened url is: ${nbClicks}`
-            : ""
-        }
-      />
-      <ShortenedUrl
-        title="Delete shortened link"
-        inputPlaceholder="Enter short link to delete"
-        buttonTitle="Submit URL"
-        value={shortUrlToDelete}
-        onChange={(e) => {
-          setShortUrlToDelete(e.target.value);
-        }}
-        action={handleDeleteShortenedUrl}
-        text={message}
-      />
-    </div>
+    </Wrapper>
   );
 }
 

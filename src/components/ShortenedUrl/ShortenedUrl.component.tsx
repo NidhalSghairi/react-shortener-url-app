@@ -1,3 +1,4 @@
+import { Button, Grid, TextField } from "@mui/material";
 import React from "react";
 
 type ShortenedUrlProps = {
@@ -20,19 +21,32 @@ const ShortenedUrl: React.FC<ShortenedUrlProps> = ({
   text,
 }) => {
   return (
-    <div>
-      <h1>{title}</h1>
-      <div>
-        <input
-          type="text"
-          placeholder={inputPlaceholder}
-          value={value}
-          onChange={onChange}
-        />
-        <button onClick={action}>{buttonTitle}</button>
-      </div>
-      <div>{text}</div>
-    </div>
+    <Grid container>
+      <Grid item xs={12}>
+        <h1>{title}</h1>
+      </Grid>
+
+      <Grid item container xs={12} spacing={2}>
+        <Grid item xs={6}>
+          <TextField
+            type="text"
+            placeholder={inputPlaceholder}
+            value={value}
+            onChange={onChange}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={6} display="flex" justifyContent={"flex-start"}>
+          <Button variant="contained" onClick={action}>
+            {buttonTitle}
+          </Button>
+        </Grid>
+      </Grid>
+
+      <Grid item xs={12}>
+        <div>{text}</div>
+      </Grid>
+    </Grid>
   );
 };
 
