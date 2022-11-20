@@ -4,20 +4,43 @@ import ShortenedUrl from "../../components/ShortenedUrl/ShortenedUrl.component";
 import { UrlDetails } from "./Home.types";
 import { deleteShortUrl, getAllUrls, getUniqueUid } from "./Home.services";
 
+/* 
+  In order to add the ability for users to choose
+  between some custom shortened URLs, we can use multiple domain names.
+  For instance, we have just localhost.
+*/
 const DOMAIN_NAMES = ["http://localhost:3000/"];
 
 function Home() {
   const [shortenedLink, setShortenedLink] = useState("");
+  const [shortenedLinkError, setShortenedLinkError] = useState("");
   const [longUrl, setLongUrl] = useState("");
   const [selectedDomainName, setSelectedDomainName] = useState(
     "http://localhost:3000/"
   );
-  const [nbClick, setNbClicks] = useState<Number | null>(null);
+  const [nbClicks, setNbClicks] = useState<Number | null>(null);
   const [shortUrl, setShortUrl] = useState("");
   const [shortUrlToDelete, setShortUrlToDelete] = useState("");
   const [message, setMessage] = useState("");
 
   const shortenUrl = () => {
+    /*  The idea is to generate a new and unique uid for each long URL
+        Then concatenate it with one of our domain names.
+        Since we don't need to authenticate to shorten a long URL or do
+        some other actions like deleting a shortened url we can use localstorage
+        to get and save data without the need for a database. 
+        With localStorage, we can also be sure that a user 
+        cannot delete or rename a shortened URLs that others have created. 
+    */
+    // what if the given "long" url is already a shortened url ?
+    // we cannot shorten an already shortened url.
+
+    if (longUrl.includes(selectedDomainName)) {
+      setShortenedLinkError("The given url is already shortened");
+      setShortenedLink("");
+      return;
+    }
+
     const savedUrls = getAllUrls();
     const Uid = getUniqueUid(savedUrls);
     setShortenedLink(selectedDomainName + Uid);
@@ -74,7 +97,7 @@ function Home() {
           setLongUrl(e.target.value);
         }}
         action={shortenUrl}
-        text={shortenedLink}
+        text={shortenedLinkError || shortenedLink}
       />
       <ShortenedUrl
         title="Get number of clicks"
@@ -85,7 +108,11 @@ function Home() {
           setShortUrl(e.target.value);
         }}
         action={getNbOfClicks}
-        text={`The number of clicks to your shortened url is: ${nbClick}`}
+        text={
+          nbClicks
+            ? `The number of clicks on your shortened url is: ${nbClicks}`
+            : ""
+        }
       />
       <ShortenedUrl
         title="Delete shortened link"
