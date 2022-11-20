@@ -12,6 +12,8 @@ function Home() {
   const [selectedDomainName, setSelectedDomainName] = useState(
     "http://localhost:3000/"
   );
+  const [nbClick, setNbClicks] = useState<Number | null>(null);
+  const [shortUrl, setShortUrl] = useState("");
 
   const shortenUrl = () => {
     const savedUrls = getAllUrls();
@@ -25,6 +27,17 @@ function Home() {
     };
     savedUrls.push(newUrlDetails);
     localStorage.setItem("allUrlsDetails", JSON.stringify(savedUrls));
+  };
+
+  const getNbOfClicks = () => {
+    const allUrlsDetails = getAllUrls();
+    const split = shortUrl.split("/");
+    const shortUrlUid = split[split.length - 1];
+    const urlDetails = allUrlsDetails.find((url) => url.uid === shortUrlUid);
+
+    if (urlDetails) {
+      setNbClicks(urlDetails.nbClicks);
+    }
   };
 
   return (
@@ -51,6 +64,17 @@ function Home() {
         }}
         action={shortenUrl}
         text={shortenedLink}
+      />
+      <ShortenedUrl
+        title="Get number of clicks"
+        inputPlaceholder="Enter short link to be see number of clicks"
+        buttonTitle="Submit URL"
+        value={shortUrl}
+        onChange={(e) => {
+          setShortUrl(e.target.value);
+        }}
+        action={getNbOfClicks}
+        text={`The number of clicks to your shortened url is: ${nbClick}`}
       />
     </div>
   );

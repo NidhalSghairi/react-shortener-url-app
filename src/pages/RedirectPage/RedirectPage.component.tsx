@@ -11,6 +11,8 @@ const RedirectPage = () => {
     const urlDetails = allUrlsDetails.find((url) => url.uid === id);
 
     if (urlDetails) {
+      urlDetails.nbClicks += 1;
+      localStorage.setItem("allUrlsDetails", JSON.stringify(allUrlsDetails));
       // eslint-disable-next-line no-restricted-globals
       location.href = urlDetails.longUrl;
     }
